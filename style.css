@@ -58,10 +58,14 @@
 
 /* Search Form */
 
+.ri-widget-search .logo {
+    width: 107px;
+    float: left;
+}
+
 .ri-widget-search form {
     margin-left: 107px;
     position: relative;
-    width: 300px;
     padding-top: 32px;
     height: 32px;
 }
@@ -106,12 +110,8 @@
     display: block;
 }
 
-.ri-widget-search .logo {
-    float: left;
-}
-
 .ri-widget-results {
-    width: 400px;
+    width: 100%;
     font-size: 80%;
     position: relative;
     padding: 5px;
