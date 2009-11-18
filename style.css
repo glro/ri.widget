@@ -1,0 +1,151 @@
+.ri-widget img {
+    border: 0;
+}
+
+.ri-widget-search form {
+    margin-left: 107px;
+    position: relative;
+    width: 300px;
+    padding-top: 32px;
+    height: 32px;
+}
+
+.ri-widget-search .field a {
+    padding: 0 .2em;
+    display: block;
+    float: left;
+    height: 32px;
+    background: #fff;
+    -moz-border-radius: 0 0 4px 4px;
+    border-radius: 0 0 4px 4px;
+}
+
+.ri-widget-search .field.selected a {
+    background: #55f;
+}
+
+.ri-widget-search .field a:hover {
+    background: #88f;
+}
+
+.ri-widget-search .field.selected a:hover {
+    background: #55f;
+}
+
+.ri-widget-search .field span {
+    display: none;
+}
+
+.ri-widget-search form input {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+.ri-widget-search .field .control {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 28px;
+    display: none;
+    width: 100%;
+    background: #55f;
+    padding: 2px;
+    -moz-border-radius: 0 4px 4px 0;
+    border-radius: 0 4px 4px 0;
+}
+
+.ri-widget-search .field .control input, .field .control select {
+    position: static;
+    width: 98%;
+}
+
+.ri-widget-search .field.selected .control {
+    display: block;
+}
+
+.ri-widget-search .logo {
+    float: left;
+}
+
+.ri-widget-results {
+    width: 400px;
+    font-size: 80%;
+    position: relative;
+    background: #55f;
+    padding: 5px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+.ri-widget-results .wait {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    opacity: .7;
+    ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
+    filter: alpha(opacity=70);
+    display: none;
+}
+
+.ri-widget-results .wait img {
+    padding-top: 3em;
+    display: block;
+    margin: auto;
+}
+
+.ri-widget-results .list {
+    background: #fff;
+    padding: 0.5em;
+    margin: 0;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+.ri-widget-results .list li {
+    display: block;
+    list-style: none;
+    line-height: 1.3em;
+    height: 2.6em;
+    overflow: hidden;
+    margin: .2em 0;
+}
+
+.ri-widget-results a {
+    color: #55f;
+    text-decoration: none;
+}
+
+.ri-widget-results a:hover {
+    text-decoration: underline;
+}
+
+.ri-widget-results .pager {
+    display: block;
+    width: 100%;
+    text-align: center;
+    margin: 0;
+    padding: 0 0 .5em 0;
+}
+
+.ri-widget-results .pager li {
+    display: inline;
+    list-style: none;
+}
+
+.ri-widget-results .pager a {
+    padding: 0.5em 0.5em;
+    color: #fff;
+}
+
+.ri-widget-results .pager a.selected {
+    color: #555;
+    background: #fff;
+    text-decoration: none;
+    -moz-border-radius: 0 0 4px 4px;
+    border-radius: 0 0 4px 4px;
+}
+
