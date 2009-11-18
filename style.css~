@@ -10,7 +10,6 @@
     text-decoration: underline;
 }
 
-
 .ri-widget-search form {
     margin-left: 107px;
     position: relative;

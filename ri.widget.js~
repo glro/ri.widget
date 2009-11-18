@@ -21,11 +21,11 @@ var baseUrl = ".";
 var url = {
     style: baseUrl + "/style.css",
     img: {
-        logo: baseUrl + "/ri-logo.png",
-        search: baseUrl + "/search.png",
-        lake: baseUrl + "/lakes.png",
-        investigator: baseUrl + "/investigator.png",
-        wait: baseUrl + "/wait.gif"
+        logo: baseUrl + "ri-logo.png",
+        search: baseUrl + "search.png",
+        lake: baseUrl + "lakes.png",
+        investigator: baseUrl + "investigator.png",
+        wait: baseUrl + "wait.gif"
     }
 };
 var styleSheetId = "ri-query-style-sheet";
