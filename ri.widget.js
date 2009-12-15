@@ -25,37 +25,45 @@ var url = {
         search: baseUrl + "/search.png",
         lake: baseUrl + "/lakes.png",
         investigator: baseUrl + "/investigator.png",
-        wait: baseUrl + "/wait.gif"
+        wait: baseUrl + "/wait.gif",
+        close: baseUrl + "/close.png"
     }
 };
 var styleSheetId = "ri-query-style-sheet";
 
-var opts = {
-    bgColor: "#fff",
-    fgColor: "#333",
-    hlColor: "#55f"
-};
 
-
-ri.widget = function(container) {
+ri.widget = function(container, opts) {
     if (document.getElementById(styleSheetId) == null)
         document.body.appendChild(elem("link", {type: "text/css", href: url.style, rel: "stylesheet", id: styleSheetId}));
 
     if (typeof container.length != "number")
-        return new ri.widget.SearchForm(addClass(container, "ri-widget"));
+        return new ri.widget.SearchForm(addClass(container, "ri-widget"), opts);
     
     var widgets = [];
     for (var i = 0; i < container.length; i++)
-        widgets.push(new ri.widget.SearchForm(addClass(container[i], "ri-widget")));
+        widgets.push(new ri.widget.SearchForm(addClass(container[i], "ri-widget"), opts));
     return widgets;
 };
 
 
-ri.widget.SearchForm = function(container) {
+ri.widget.settings = {
+    items: 5,
+};
+
+
+ri.widget.SearchForm = function(container, opts) {
+    opts = opts || {};
+    for (o in ri.widget.settings)
+        opts[o] = opts[o] || ri.widget.settings[o];
+    this.subscribers = {};
+    
     this.fields = [
-        createField("Keyword Search", url.img.search, elem("input", {type: "text", name: "query"})),
-        createField("Lake or River", url.img.lake, elem("select", {name: "lake"}, elem("option", {value: "all"}, text("All Lakes & Rivers")))),
-        createField("Investigator", url.img.investigator, elem("input", {type: "text", name: "investigator"}))
+        field("Keyword Search", url.img.search, 
+              starterClass(elem("input", {type: "text", name: "query"}), "kw-starter")),
+        field("Lake or River", url.img.lake, elem("select", {name: "lake"}, 
+              elem("option", {value: "all"}, text("All Lakes & Rivers")))),
+        field("Investigator", url.img.investigator, 
+              starterClass(elem("input", {type: "text", name: "investigator"}), "inv-starter"))
     ];
     
     this.searchForm = elem("form", {"class": "ri-query-form", method: "GET"}, 
@@ -68,21 +76,17 @@ ri.widget.SearchForm = function(container) {
         var query = { q: this.query.value };
         if (this.lake.value != "all")
             query.lake = this.lake.value;
-        if (box)
-            container.removeChild(box);
+        if (this.investigator.value != "")
+            query.pi = this.investigator.value;
+        if (box && box.parentNode)
+            box.parentNode.removeChild(box);
         box = elem("div", {"class": "result-box"});
         container.appendChild(box);
-        var rb = new ri.widget.ResultBox(box, new ri.query.pager(query));
+        var rb = new ri.widget.ResultBox(box, new ri.query.pager(query, opts.items));
         return false;
     };
     
-    // Populate lakes list
-    //ri.query.lakes(function(result) {
-    //    for (var l = result.lakes, i = 0; i < l.length; i++)
-    //        form.lake.appendChild(elem("option", {value: "" + l[i].id}, text(l[i].name)));
-    //});
-    
-    // Add the event handlers
+    // Add the event handlers to trigger selection
     
     var this_ = this;
     function selectorFor(i) {
@@ -96,7 +100,24 @@ ri.widget.SearchForm = function(container) {
             a[j].onclick = s;
     }
     
+    // Populate lakes list when Lakes tab selected
+    
+    var lakesPopulated = false;
+    this.subscribe("selected", function(field) {
+        var lakesField = this.fields[1];
+        if (!lakesPopulated && lakesField == field) {
+            ri.query.lakes(function(result) {
+                var lakes = lakesField.getElementsByTagName("select")[0];
+                for (var l = result.lakes, i = 0; i < l.length; i++)
+                    lakes.appendChild(elem("option", {value: "" + l[i].id}, text(l[i].name)));
+            });
+            lakesPopulated = true;
+        }
+    });
+    
     this.select(0);
+    
+    // Replace the contents of the container with the widget
     
     empty(container);
     container.appendChild(elem("div", {"class": "ri-widget-search"}, [
@@ -110,11 +131,25 @@ ri.widget.SearchForm.prototype = {
     select: function(field) {
         for (var i = 0; i < this.fields.length; i++)
             this.fields[i].setAttribute("class", "field" + (i == field ? " selected" : ""));
+        this.notify("selected", this.fields[field]);
+    },
+    subscribe: function(event, obs) {
+        if (this.subscribers[event] == undefined)
+            this.subscribers[event] = [];
+        this.subscribers[event].push(obs);
+    },
+    notify: function(event) {
+        var subs = this.subscribers[event] || [];
+        var args = subs.slice.call(arguments);
+        args.shift();
+        
+        for (var i = 0; i < subs.length; i++)
+            subs[i].apply(this, args);
     }
 };
 
 
-function createField(label, img, control) {
+function field(label, img, control) {
     return elem("div", {"class": "field"}, [
         elem("a", {href: "#", title: label}, [
             elem("img", {src: img}), 
@@ -125,7 +160,6 @@ function createField(label, img, control) {
 }
 
 
-
 ri.widget.ResultBox = function(box, pager) {
     this.pager = pager;
     
@@ -133,7 +167,12 @@ ri.widget.ResultBox = function(box, pager) {
     this.wait = box.appendChild(elem("div", {"class": "wait"}, elem("img", {src: url.img.wait})));
     this.list = box.appendChild(elem("ol", {"class": "list"}));
     this.pglist = box.appendChild(elem("ul", {"class": "pager"}));
+    this.close = box.appendChild(elem("a", {href: "#", "class": "close-button"}, elem("img", {src: url.img.close, alt: "Close"})));
     box.setAttribute("class", "ri-widget-results");
+    
+    this.close.onclick = function(e) {
+        box.parentNode.removeChild(box);
+    };
     
     var this_ = this;
     pager.subscribe("switch", function(pg) {
@@ -158,9 +197,19 @@ ri.widget.ResultBox.prototype = {
         empty(this.list);
         this.list.setAttribute("start", "" + ((this.pager.page - 1) * this.pager.pageSize + 1));
         var projects = this.pager.getProjects();
+        if (projects.length == 0) {
+            // Display "Your search did not match any projects"
+            this.list.appendChild(elem("li", {"class": class_}, [
+                    elem("p", {"class": "no-projects"}, text("Your search did not match any projects."))
+                ]));
+        }
         for (var i = 0; i < projects.length; i++) {
             var p = projects[i];
-            this.list.appendChild(elem("li", null, elem("a", {href: p.url, target: "_blank"}, text(p.title))));
+            var class_ = "objective " + (i == 0 ? "first" : (i == projects.length - 1 ? "last" : ""));
+            this.list.appendChild(elem("li", {"class": class_}, [
+                    elem("a", {href: p.url, target: "_blank"}, text(p.title)),
+                    elem("p", {"class": "objective"}, text(p.abstract))
+                ]));
         }
         
         // Update page list
@@ -223,5 +272,51 @@ function addClass(n, c) {
     n.setAttribute("class", val);
     return n;
 }
+
+
+// Remove a class from element n, if it has it. Returns n.
+function removeClass(n, c) {
+    var attr = n.attributes["class"],
+        val = attr ? attr.nodeValue : "";
+    var needle = new RegExp("(^|\s)" + c + "($|\s)");
+    n.setAttribute("class", val.replace(needle, "", "g"));
+    return n;
+}
+
+// Adds a "starter" class to text inputs. That is, whenever the field is empty,
+// the class will be applied to the input. Then when it gains focus, the class
+// is removed and only re-added if it is empty again on a blur.
+function starterClass(txtIn, klass) {
+    var nop = function() {},
+        focusFunc = txtIn.onfocus || nop,
+        blurFunc = txtIn.onblur || nop,
+        showingStarter = false;
+    
+    function show() {
+        showingStarter = true;
+        addClass(txtIn, klass);
+    }
+    
+    function hide() {
+        showingStarter = false;
+        removeClass(txtIn, klass);
+    }
+    
+    txtIn.onfocus = function(e) {
+        if (showingStarter)
+            hide();
+        return focusFunc.call(this, e);
+    };
+    
+    txtIn.onblur = function(e) {
+        if (txtIn.value == "")
+            show();
+        return blurFunc.call(this, e);
+    };
+    
+    if (txtIn.value == "")
+        show();
+    return txtIn;
+};
 
 })();
