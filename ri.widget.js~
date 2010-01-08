@@ -96,7 +96,7 @@ ri.widget = function(container, opts) {
 
 
 // The base URL to use for resources with relative paths
-var baseUrl = "http://ri.ijc.org/widget/";
+var baseUrl = ".";
 
 
 /*
@@ -106,45 +106,45 @@ ri.widget.settings = {
     widgetClass: "ri-widget",
     items: 5,
     stylesheets: [
-        { href: baseUrl + "style.css" }
+        { href: baseUrl + "/style.css" }
     ],
     images: {
         logo: {
-            url: baseUrl + "ri-logo.png",
+            url: baseUrl + "/ri-logo.png",
             w: 107, h: 60,
             alt: "Search the Research Inventory"
         },
         search: {
-            url: baseUrl + "search.png", 
+            url: baseUrl + "/search.png", 
             w: 30, h: 30,
             alt: "Filter projects by keyword",
             trans: true
         },
         lake: {
-            url: baseUrl + "lakes.png", 
+            url: baseUrl + "/lakes.png", 
             w: 49, h: 30,
             alt: "Filter projects by watershed",
             trans: true
         },
         investigator: {
-            url: baseUrl + "investigator.png", 
+            url: baseUrl + "/investigator.png", 
             w: 30, h: 30,
             alt: "Filter projects by investigators",
             trans: true
         },
         wait: {
-            url: baseUrl + "wait.gif",
+            url: baseUrl + "/wait.gif",
             w: 48, h: 48,
             alt: "Loading search results"
         },
         close: {
-            url: baseUrl + "close.png",
+            url: baseUrl + "/close.png",
             w: 30, h: 30,
             alt: "Close search results",
             trans: true
         },
         spacer: {
-            url: baseUrl + "spacer.gif"
+            url: baseUrl + "/spacer.gif"
         }
     }
 };
@@ -372,7 +372,7 @@ ri.widget.ResultBox.prototype = {
                             : (i == projects.length - 1 ? "last" : ""));
                 this.list.appendChild(elem("li", {"class": class_}, [
                     elem("a", {href: p.url, target: "_blank"}, text(p.title)),
-                    elem("p", {"class": "objective"}, text(p["abstract"]))  // Accessing as dict because YUI complains
+                    elem("p", {"class": "objective"}, text(p["abstract"]))  // Access as dict because YUI complain
                 ]));
             }
         }

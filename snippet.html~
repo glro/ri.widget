@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
     <body>
         <!-- START: RI Query Widget -->
-        <div id="ri-widget" class="ri-widget" style="width: 350px">
+        <div id="ri-widget" class="ri-widget" style="width: 300px">
             <a href="http://ri.ijc.org/">
                 <img src="http://ri.ijc.org/widget/ri-banner.jpg" />
             </a>

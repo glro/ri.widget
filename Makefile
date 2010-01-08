@@ -11,5 +11,5 @@ merged: ri.widget-min.js ri.query-min.js
 	${JAVA} -jar ${YUICOMPRESSOR} $< -o ${<:.js=-min.js}
 
 clean:
-	rm -f ri.widget-min.js
+	rm -f ri.widget-min.js ri.query-min.js ri.widget-${VERSION}.js
 
