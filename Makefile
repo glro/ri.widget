@@ -1,5 +1,6 @@
 JAVA=java
 YUICOMPRESSOR=/opt/yuicompressor/yuicompressor-2.4.2.jar
+RIQUERY_PATH=../ri.query/ri.query-min.js
 
 ri.widget: ri.widget-min.js
 

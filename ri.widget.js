@@ -81,7 +81,7 @@ ri.widget = function(container, opts) {
                     media: "media" in sheet ? sheet.media : "all",
                     rel: "stylesheet"
                 });
-            container.appendChild(n);
+            container.parentNode.insertBefore(n, container);
         }
     }
 

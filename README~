@@ -1,0 +1,74 @@
+RI Widget - Widget to search the Research Inventory's list of projects
+
+
+1. Using the Research Inventory Widget ========================================
+
+A full, simple example use of the RI widget can be found in snippet.html. The
+short and sweet of it is:
+
+ri.widget(document.getElementyById("ri-widget"));
+
+This will wipe out the contents of the DOM element with id "ri-widget" and 
+replace it with a search form. When submitted, this form will pop up a search
+results box, hover over top of other content. The widget itself will respect the
+width constraints imposed by its parent (the element with id "ri-widget" in
+this case).
+
+For a more complex example, consider we wish to make the following changes:
+ - Use custom CSS that overrides the colours (a "theme")
+ - Completely hide the widget when printed
+ - Display 8 results, instead of the default 5
+ - Use a different "close" image (at top right of result box)
+
+For this we'll need to pass in some "options" to the ri.widget call. They are 
+called options because they are precisely that, optional. The actual options
+themselves are given as an object, where the properties correspond to the
+options we're overriding. In this example, we would call ri.widget using 
+something similar to this:
+
+<div id="ri-widget">
+  <a href="http://ri.ijc.org/">
+    <img src="ri-banner.jpg" alt="Research Inventory" />
+  </a>
+</div>
+<script type="text/javascript>
+    ri.widget(document.getElementById("ri-widget"), {
+        items: 8,
+        stylesheets: ri.widget.settings.stylesheets.concat([
+            { href: "/css/ri-widget-theme.css" },
+            { href: "/css/ri-widget-print.css", media: "print" }
+        ]),
+        images: {
+            close: {
+                url: "/images/my-close.png", w: 30, h: 30, trans: true, alt: "X"
+            }
+        }
+    });
+</script>
+
+
+2. Supported Browsers =========================================================
+
+Every effort is made to be as cross-platform as possible. However, only the 
+following browsers are used during testing:
+
+- Internet Explorer 6, 7, and 8 (Windows only)
+- Firefox 3 and 3.5 (Linux and Windows)
+- Opera 10 (Linux and Windows)
+- Safari 4 (Windows only)
+- Google Chrome (Windows only)
+
+Known issues with browser support:
+
+* MSIE "quirks mode" is NOT supported. Please ensure your page has a DOCTYPE.
+
+* The widget has rounded borders on Firefox, Safari, and Chrome (and any other 
+browser that supports border-radius, or the corresponding mozilla or webkit 
+vendor extensions). I think it looks nice and hope to add support for IE and 
+Opera soon.
+
+* Currently, browser sniffing is done to fix PNG transparency issues in MSIE 6.
+Any "image" in the ri.widget's images option that has a property "trans" set to
+true will be "fixed," so it is important to add that property to any transparent
+PNGs you are using.
+
