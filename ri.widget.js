@@ -90,7 +90,7 @@ ri.widget = function(container, opts) {
     
     var widgets = [];
     for (var i = 0; i < container.length; i++)
-        widgets.push(new ri.widget.SearchForm(addClass(container[i], "ri-widget"), opts));
+        widgets.push(new ri.widget.SearchForm(addClass(container[i], opts.widgetClass), opts));
     return widgets;
 };
 
@@ -103,6 +103,7 @@ var baseUrl = ".";
  * Default settings used by the RI widget.
  */
 ri.widget.settings = {
+    widgetClass: "ri-widget",
     items: 5,
     stylesheets: [
         { href: baseUrl + "/style.css" }
