@@ -86,7 +86,7 @@ ri.widget = function(container, opts) {
     }
 
     if (typeof container.length != "number")
-        return new ri.widget.SearchForm(addClass(container, "ri-widget"), opts);
+        return new ri.widget.SearchForm(addClass(container, opts.widgetClass), opts);
     
     var widgets = [];
     for (var i = 0; i < container.length; i++)
@@ -142,12 +142,10 @@ ri.widget.settings = {
             w: 30, h: 30,
             alt: "Close search results",
             trans: true
-        },
-        spacer: {
-            url: baseUrl + "spacer.gif"
         }
     }
 };
+
 
 
 /*
@@ -169,7 +167,7 @@ ri.widget.SearchForm = function(container, opts) {
     this.subscribers = {};
     
     // Create the fields used to filter the results
-    
+
     this.fields = [
         field("Keyword Search", this.images.search, 
               starterClass(elem("input", {type: "text", name: "query"}), "kw-starter")),
@@ -464,12 +462,17 @@ function img(params, attrs) {
 }
 
 
+// Used by wrapPNG as a blank image we can resize
+var spacerImage = baseUrl + "spacer.gif";
+
+
 /*
  * Wraps an IMG element to fix PNG transparency issues in IE 5.5 and 6.0.
  */
 function wrapPNG(img) {
+
     var blank = elem("img", {
-        src: images.spacer.url,
+        src: spacerImage,
         width: img.width,
         height: img.height
     });
