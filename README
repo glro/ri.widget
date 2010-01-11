@@ -1,3 +1,5 @@
+The Great Lakes - St. Lawrence Research Inventory (RI) - http://ri.ijc.org/
+
 RI Widget - Widget to search the Research Inventory's list of projects
 
 
@@ -46,6 +48,8 @@ something similar to this:
     });
 </script>
 
+A working example can be found at: http://ri.ijc.org/widget/snippet.html
+
 
 2. Supported Browsers =========================================================
 
@@ -69,4 +73,32 @@ Opera soon.
 
 * Currently, browser sniffing is done to fix PNG transparency issues in MSIE 6.
 
+
+3. Building the Script ========================================================
+
+While the script can be used in its un-merged and un-minified state, it is not
+recommended for a production web site (the merged, minified version is less than
+1/3 the size of the un-minifed version). The source includes a Makefile that can
+be used to minify both ri.query and ri.widget and then merge them.  However, 
+it does require the YUI JS Compressor, so this must be installed first. After
+it is installed, you must edit the variable YUICOMPRESSOR at the the top of the
+Makefile and point it to the path of the YUI Compressor JAR file. After this,
+simply run
+
+make
+
+in the source directory and you should have 3 new files:
+
+ri.query-min.js
+ri.widget-min.js
+ri.widget-VER.js       (VER is replaced with the current version, eg. 1.0)
+
+The file ri.widget-VER.js is the combined, minified file.
+
+
+4. Further Help? ==============================================================
+
+If you have any questions or need any help, please feel free to contact me at:
+
+switzert@windsor.ijc.org
 
