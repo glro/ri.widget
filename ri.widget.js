@@ -12,6 +12,23 @@
  * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF     
  * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
  */
+
+/** @fileoverview
+ * <p>RI Widget is a Javascript library used to create a Widget within an HTML
+ * page. The goal is to be unobstrusive and require relatively little work on 
+ * the part of the web developer adding it to a web page. It also tries to be
+ * compact, requiring as little screen real estate as needed.</p>
+ *
+ * <p>The entire widget is created in Javascript using DOM methods. This isn't
+ * very pretty and I would like to switch to a templating engine instead at some
+ * point. I also intend on creating a jQuery version, and seeing how that
+ * increases compatibility and/or decreases code size. It would certainly be
+ * more maintainable, but would require buy-in from users.</p>
+ *
+ * @todo Move from pure JS DOM to Templating (make it easier to modify)
+ *
+ * @author Thomas Switzer <switzert@windsor.ijc.org>
+ */
 (function() {
 
 var ri = window.ri = window.ri || {};
@@ -24,34 +41,44 @@ if (typeof ri.widget != "undefined")
 var usedStylesheets = {};
 
 
-/*
- * Creates a new RI widget in container. The argument container can be either
+/**
+ * <p>Creates a new RI widget in container. The argument container can be either
  * a single DOM Element or an array (or NodeList) of DOM Elements. The contents
  * of the container(s) will be replaced with RI widgets. The argument opts is
  * an optional object that specifies various options. The options available 
- * are:
+ * are:</p>
  *
- *  "items" : Number of projects to display, per page, in the results
+ * <ul>
+ *  <li>
+ *      <code>items</code>: 
+ *      Number of projects to display, per page, in the results.
+ *  </li>
+ *  <li>
+ *      <code>images</code>:
+ *      An object whose properties are the names of images. This is used
+ *      to override images used by the widget. If only some of the
+ *      required images are provided, the unprovided ones will default
+ *      to the originals.
+ *  </li>
+ *  <li>
+ *      <code>stylesheets</code>:
+ *      An array of stylesheets to include. Each "stylesheet" is an
+ *      object with, at least, the required properties "href" (
+ *      (specifying the URL/location of the stylesheet) and can also
+ *      contain the optional properties "type" and "media". This
+ *      array represents all stylesheets used. If you only wish to
+ *      override some parts of the default stylesheet, then you
+ *      must explictly list the default stylesheet in the array.
+ *  </li>
+ * </ul>
  *
- *  "images" : An object whose properties are the names of images. This is used
- *             to override images used by the widget. If only some of the
- *             required images are provided, the unprovided ones will default
- *             to the originals.
- *
- *  "stylesheets" : An array of stylesheets to include. Each "stylesheet" is an
- *                  object with, at least, the required properties "href" (
- *                  (specifying the URL/location of the stylesheet) and can also
- *                  contain the optional properties "type" and "media". This
- *                  array represents all stylesheets used. If you only wish to
- *                  override some parts of the default stylesheet, then you
- *                  must explictly list the default stylesheet in the array.
- *
- * As an example, let's say you wish to customize the widget by providing your
- * own colour scheme, but you wish to keep the rest of the styling as is. 
+ * <p>As an example, let's say you wish to customize the widget by providing 
+ * your own colour scheme, but you wish to keep the rest of the styling as is. 
  * Additionally, you do not like the close button and wish to replace it. 
  * Lastly, you would prefer it if 8 items were shown instead of 5. You would 
- * use something like the following:
+ * use something like the following:</p>
  *
+ * <pre>
  *     ri.widget(document.getElementById("ri-widget"), {
  *         items: 8,
  *         stylesheets: ri.widget.settings.stylesheets.concat([{
@@ -65,6 +92,7 @@ var usedStylesheets = {};
  *              }
  *          }
  *     });
+ *  </pre>
  */
 ri.widget = function(container, opts) {
     opts = extend({}, ri.widget.settings, opts || {});
@@ -99,7 +127,7 @@ ri.widget = function(container, opts) {
 var baseUrl = "http://ri.ijc.org/widget/";
 
 
-/*
+/**
  * Default settings used by the RI widget.
  */
 ri.widget.settings = {
@@ -148,18 +176,28 @@ ri.widget.settings = {
 
 
 
-/*
- * The SearchForm class handles the display of a search form. The constructor
+/**
+ * <p>The SearchForm class handles the display of a search form. The constructor
  * requires a container to create the search form in, as well as some optional
  * settings. The opts parameter is an object with the following optional 
- * properties:
- *  "items": The number of items, per page, to display.
- * The container contents will be emptied during construction and replaced with
- * the SearchForm.
+ * properties:</p>
  *
- * The SearchForm only shows one field at a time by default. Other JavaScript
+ * <ul>
+ *  <li>
+ *      <code>items</code>:
+ *      The number of items, per page, to display.
+ *  </li>
+ * </ul>
+ *
+ * <p>The container contents will be emptied during construction and replaced 
+ * with the SearchForm.</p>
+ *
+ * <p>The SearchForm only shows one field at a time by default. Other JavaScript
  * code that is interested in knowing when a field is selected can subscribe
- * to the SearchForm's "select" event.
+ * to the SearchForm's "select" event.</p>
+ * 
+ * @param container The DOM Element to use as the SearchForm's container
+ * @param opts      The options arguments
  */
 ri.widget.SearchForm = function(container, opts) {
     opts = extend({}, ri.widget.settings, opts || {});
@@ -243,8 +281,10 @@ ri.widget.SearchForm = function(container, opts) {
 };
 
 ri.widget.SearchForm.prototype = {
-    /* 
-     * Select a field to display by index 
+    /**
+     * Select a field to display by index.
+     *
+     * @param field An integer index for the field to display
      */
     select: function(field) {
         for (var i = 0; i < this.fields.length; i++)
@@ -252,8 +292,11 @@ ri.widget.SearchForm.prototype = {
         this.notify("selected", this.fields[field]);
     },
 
-    /*
+    /**
      * Subscribe an observer obs to an event type.
+     *
+     * @param event The name (string) of the event type to observe
+     * @param obs   A callback function to notify (call) when event occurs
      */
     subscribe: function(event, obs) {
         if (this.subscribers[event] == undefined)
@@ -261,8 +304,11 @@ ri.widget.SearchForm.prototype = {
         this.subscribers[event].push(obs);
     },
 
-    /*
-     * Notify subscribers of a particular event.
+    /**
+     * Notify subscribers of a particular event. All arguments passed to this
+     * function will be similarily passed to all observers.
+     *
+     * @param event The event (string) type that occured
      */
     notify: function(event) {
         var subs = this.subscribers[event] || [];
@@ -291,7 +337,7 @@ function field(label, image, control) {
 }
 
 
-/*
+/**
  * The ResultBox class is used to display a list of paged results to the user.
  * It requires a container for the ResultBox (the box argument to the 
  * constructor) and a query pager (ie. an instance of ri.query.Pager). The
@@ -301,6 +347,10 @@ function field(label, image, control) {
  * to switch pages. The page links the result box displays trigger a switch in
  * the pager which, presumably, should eventually notify the result box of the
  * corresponding "switch" and "change" events.
+ *
+ * @param box   The DOM Element that will act as a container for the ResultBox
+ * @param pager The ri.query.Pager instance to use for pagination
+ * @param opts  Optional arguments
  */
 ri.widget.ResultBox = function(box, pager, opts) {
     opts = extend({}, ri.widget.settings, opts || {});
@@ -334,15 +384,15 @@ ri.widget.ResultBox = function(box, pager, opts) {
 };
 
 ri.widget.ResultBox.prototype = {
-    /*
-     * Return the current page being displayed.
+    /**
+     * Returns the current page being displayed.
      */
     page: function(pg) {
         if (pg == undefined)
             return this.page;
     },
 
-    /*
+    /**
      * This will update the result box from the pager. This should be called
      * whenever the pager has changed to a new page (eg. when the pager emits
      * a "change" event).
@@ -533,6 +583,7 @@ function starterClass(txtIn, klass) {
     var nop = function() {},
         focusFunc = txtIn.onfocus || nop,
         blurFunc = txtIn.onblur || nop,
+        changeFunc = txtIn.onchange || nop,
         showingStarter = false,
         show = function() {
             showingStarter = true;
@@ -551,6 +602,13 @@ function starterClass(txtIn, klass) {
         if (txtIn.value == "")
             show();
         return blurFunc.call(this, e);
+    };
+    txtIn.onchange = function(e) {
+        if (txtIn.value == "")
+            show();
+        else
+            hide();
+        return changeFunc.call(this, e);
     };
     if (txtIn.value == "")
         show();
